@@ -14,7 +14,8 @@ class MoviesFilter(django_filters.FilterSet):
     )
     genres = django_filters.ModelChoiceFilter(
         queryset=Genre.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        empty_label="All Genre",
+        widget=forms.Select(attrs={'placeholder': 'Select Genre','class': 'form-control'}),
         field_name='genres'
     )
 
