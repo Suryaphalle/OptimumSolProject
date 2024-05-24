@@ -1,40 +1,84 @@
 <!-- film_list.html -->
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block title %}Movies@Mariana{% endblock %}
 
 {% block content %}
 <h1 class="mb-4">Movies@Mariana</h1>
-<form method="get" class="form-inline mb-4">
+<form method="get" class="form-inline mb-4 float-right">
+    <div class="form-group mr-2">
+        <!-- <label for="id_title" class="mr-2">Title</label> -->
+        {{ filter.form.title }}
+    </div>
     <div class="form-group mr-2">
         <!-- <label for="id_genres" class="mr-2">Genre</label> -->
         {{ filter.form.genres }}
     </div>
-    <button type="submit" class="btn btn-primary">Filter</button>
+    <div class="form-group mr-2">
+        <!-- <label for="id_release_date" class="mr-2">Release Year</label> -->
+        {{ filter.form.released }}
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search" ></i></button>
 </form>
-<table class="table table-striped">
-    <thead class="thead-dark">
-        <tr>
-            <th>Title</th>
-            <th>Release Date</th>
-            <th>IMDB Rating</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for film in movie %}
-        <tr>
-            <td class="d-flex align-items-center">
-                {% if film.poster %}
-                    <img src="{{ film.poster }}" alt="{{ film.title }}" class="img-thumbnail mr-3" style="max-width: 70px;">
-                {% else %}
-                    <img src="https://www.prokerala.com/movies/assets/img/no-poster-available.jpg" alt="No Poster" class="img-thumbnail mr-3" style="max-width: 70px;">
-                {% endif %}
-                <span>{{ film.title }}</span>
-            </td>
-            <td>{{ film.released }}</td>
-            <td>{{ film.imdb_rating }}/10   </td>
-        </tr>
+<table class="table table-dark">
+<thead>
+    <tr>
+        <th>Month</th>
+        <th>Day</th>
+        <th>Film</th>
+        <th>Released</th>
+        <th>Rating</th>
+        <th>Like</th>
+        <th>Rewatch</th>
+        <th>Review</th>
+    </tr>
+</thead>
+<tbody>
+    {% for year, months in grouped_movies.items %}
+        {% for month, movies in months.items %}
+            {% for movie in movies %}
+                <tr>
+                    <td>{{ month }} {{ year }}</td>
+                    <td>{{ movie.released|date:"d" }}</td>
+                    <td class="d-flex align-items-center">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster }}" alt="{{ movie.title }}" class="img-thumbnail mr-3" style="max-width: 50px;">
+                        {% else %}
+                            <img src="https://www.prokerala.com/movies/assets/img/no-poster-available.jpg" alt="No Poster" class="img-thumbnail mr-3" style="max-width: 50px;">
+                        {% endif %}
+                        <span>{{ movie.title }}</span>
+                    </td>
+                    <td>{{ movie.released|date:"Y" }}</td>
+                    <td>
+                        <div class="star-rating">
+                            {% for i in 1|to_list:10 %}
+                                <i class="fa{% if movie.imdb_rating >= i %}s{% else %}r{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if movie.liked %}
+                            <i class="fa fa-heart text-danger"></i>
+                        {% else %}
+                            <i class="fa fa-heart-o"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if movie.rewatch %}
+                            <i class="fa fa-refresh"></i>
+                        {% else %}
+                            <i class="fa fa-refresh fa-spin text-muted"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            {% endfor %}
         {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
+
+
 {% endblock %}
